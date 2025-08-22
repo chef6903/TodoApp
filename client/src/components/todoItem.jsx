@@ -10,6 +10,7 @@ import {
 
 const TodoItem = () => {
   const todos = useAppSelector((state) => state.todos.listTodos);
+
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(fetchListTodos());
@@ -28,12 +29,16 @@ const TodoItem = () => {
     dispatch(setEditTodoItem(todo));
   };
 
+  if (!todos || todos.length === 0) {
+    return <p className="text-center text-gray-500 my-8">No tasks yet 🚀</p>;
+  }
+
   return (
     <div className="space-y-4">
       <ul className=" my-5 mx-5 pb-5">
         {todos.map((todo) => (
           <li
-            key={todo.id}
+            key={todo._id}
             className={`flex justify-center items-center border-2 mb-2 bg-[#f9f9f9] rounded-[4px] px-3 py-2 ${
               todo.completed ? "line-through" : ""
             }`}

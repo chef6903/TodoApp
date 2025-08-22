@@ -62,15 +62,21 @@ export const login = async (req, res) => {
     if (!user) {
       return res
         .status(404)
-        .json({ success: false, message: "Email không tồn tại" });
+        .json({ success: false, message: "Email hoặc mật khẩu không đúng" });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(404).json({ success: false, message: "Sai mật khẩu" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Email hoặc mật khẩu không đúng" });
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      { id: user._id.toString() },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
     res.cookie("token", token, {
       httpOnly: true,

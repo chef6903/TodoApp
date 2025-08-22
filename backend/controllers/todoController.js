@@ -1,10 +1,19 @@
 import Todo from "../models/todoSchema.js";
+import User from "../models/userModel.js";
 
 export const getTodos = async (req, res) => {
   try {
-    const todos = await Todo.find({ userId: req.user.userId }).sort({
-      createdAt: -1,
-    });
+    const userId = req.user.userId; // lấy từ middleware userAuth
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // chỉ lấy todo thuộc về user này
+    const todos = await Todo.find({ userId: userId }).sort({ createdAt: -1 });
     res.status(200).json({ success: true, todos });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -12,20 +21,24 @@ export const getTodos = async (req, res) => {
 };
 
 export const createTodo = async (req, res) => {
-  const { title, description, dueDate } = req.body;
-  if (!title)
-    return res
-      .status(400)
-      .json({ success: false, message: "Title is required" });
-
   try {
-    const todo = await Todo.create({
-      userId: req.user.userId,
+    const userId = req.user.userId;
+    const { title, description, dueDate } = req.body;
+
+    if (!title) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Title is required" });
+    }
+
+    const newTodo = await Todo.create({
       title,
       description,
       dueDate,
+      userId: userId, // gắn userId vào todo
     });
-    res.status(201).json({ success: true, todo });
+
+    return res.status(201).json({ success: true, todo: newTodo });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

@@ -5,6 +5,8 @@ import { Routes, Route } from "react-router-dom";
 // import EmailVerify from "./pages/EmailVerify";
 import { ToastContainer } from "react-toastify";
 import TodoApp from "./components/todoList";
+import Login from "./pages/Login";
+import Home from "./pages/Home";
 const App = () => {
   // const { loading } = useContext(AppContext);
 
@@ -21,7 +23,8 @@ const App = () => {
     <div>
       <ToastContainer />
       <Routes>
-        <Route path="/" element={<TodoApp />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         {/* <Route path="/login" element={<Login />} />
         <Route path="/email-verify" element={<EmailVerify />} />
         <Route path="/reset-password" element={<ResetPassword />} /> */}

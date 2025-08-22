@@ -1,34 +1,37 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { apiTodo } from "../../../service/api";
 
 const API_URL = "http://localhost:3001/todos";
 
 export const fetchListTodos = createAsyncThunk(
   "todos/fetchListTodos",
   async () => {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-    return data;
+    try {
+      const res = await apiTodo.get("/");
+      return res.data;
+    } catch (error) {
+      console.error("Fetch todos failed:", error);
+      throw error;
+    }
   }
 );
-
 export const addNewTodo = createAsyncThunk(
   "todos/addNewTodo",
   async (payload, thunkAPI) => {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        title: payload.title,
-      }),
-      headers: {
-        "Content-Type": " application/json",
-      },
-    });
-    const data = await res.json();
-    if (data && data.id) {
-      //create succeed
-      thunkAPI.dispatch(fetchListTodos());
+    try {
+      const res = await apiTodo.post("/create", payload);
+
+      const data = res.data;
+
+      if (data.success && data.todo) {
+        thunkAPI.dispatch(fetchListTodos()); // fetch lại danh sách
+      }
+
+      return data.todo;
+    } catch (error) {
+      console.error("Add new todo failed:", error);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
-    return data;
   }
 );
 
@@ -128,7 +131,7 @@ const todoSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchListTodos.fulfilled, (state, action) => {
       // Add user to the state array
-      state.listTodos = action.payload;
+      state.listTodos = action.payload.todos;
     });
     builder.addCase(addNewTodo.fulfilled, (state, action) => {
       // Add user to the state array
