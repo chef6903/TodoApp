@@ -14,6 +14,7 @@ import Header from "./Header.jsx";
 const TodoApp = () => {
   const dispatch = useAppDispatch();
   const todos = useAppSelector((state) => state.todos.listTodos);
+  const { isAuthenticated, userData } = useAppSelector((state) => state.users);
   const [newTodo, setNewTodo] = useState("");
 
   const [activeTab, setActiveTab] = useState("today");
@@ -27,12 +28,16 @@ const TodoApp = () => {
   // });
 
   const handleModalAddTodo = () => {
+    if (!isAuthenticated) {
+      alert("Bạn cần đăng nhập");
+      return;
+    }
     setIsOpenModal(true);
   };
 
   return (
     <div>
-      <div className="max-w-lg my-10 mx-auto rounded-lg bg-[#fff] shadow mt-28">
+      <div className="max-w-lg my-10 mx-auto rounded-lg bg-[#fff] shadow mt-12">
         <h2 className="mb-4 text-center bg-[#2F6A34] text-white text-2xl py-3">
           📝 My Tasks
         </h2>

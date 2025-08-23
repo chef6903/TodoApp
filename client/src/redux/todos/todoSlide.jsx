@@ -60,17 +60,12 @@ export const finishTodo = createAsyncThunk(
 export const deleteTodo = createAsyncThunk(
   "todos/deleteTodo",
   async (payload, thunkAPI) => {
-    const res = await fetch(`${API_URL}/${payload.id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": " application/json",
-      },
-    });
-    const data = await res.json();
-    if (data && data.id) {
+    const res = await apiTodo.delete(`/delete/${payload._id}`);
+    const data = res.data;
+    if (data.success) {
       thunkAPI.dispatch(fetchListTodos());
     }
-    return data;
+    return res.data;
   }
 );
 
@@ -127,6 +122,15 @@ const todoSlice = createSlice({
     clearEditTodoItem: (state) => {
       state.editTodoItem = null;
     },
+    clearTodos: (state) => {
+      state.listTodos = [];
+      state.isAddNewSuccess = false;
+      state.isEditSuccess = false;
+      state.isDeleteSuccess = false;
+      state.isFinishSuccess = false;
+      state.isEditMode = false;
+      state.editTodoItem = null;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchListTodos.fulfilled, (state, action) => {
@@ -159,6 +163,7 @@ export const {
   finishEditMode,
   clearEditTodoItem,
   setEditTodoItem,
+  clearTodos,
 } = todoSlice.actions;
 
 export default todoSlice.reducer;

@@ -7,17 +7,16 @@ import { ToastContainer } from "react-toastify";
 import TodoApp from "./components/todoList";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getAuthState } from "./redux/todos/userSlide";
 const App = () => {
-  // const { loading } = useContext(AppContext);
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.users);
 
-  // // Hiển thị một màn hình tải toàn cục nếu đang trong quá trình loading
-  // if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center min-h-screen">
-  //       Đang tải...
-  //     </div>
-  //   );
-  // }
+  useEffect(() => {
+    dispatch(getAuthState()); // check login khi F5
+  }, [dispatch]);
 
   return (
     <div>

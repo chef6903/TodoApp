@@ -72,7 +72,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gray-100 ">
       <div className="bg-white p-10 rounded-lg shadow-lg w-full sm:w-96 text-gray-700 text-sm border border-gray-200">
         <h2 className="text-3xl font-semibold text-gray-900 text-center mb-3">
           {state === "Sign up" ? "Create Account" : "Login"}
@@ -122,12 +122,7 @@ const Login = () => {
               value={password}
             />
           </div>
-          <p
-            onClick={() => navigate("/reset-password")}
-            className="mb-3 ml-1 text-indigo-500 cursor-pointer"
-          >
-            Forgot password
-          </p>
+
           <button className="w-full py-2.5 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium hover:opacity-90 transition">
             {state}
           </button>
