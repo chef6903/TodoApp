@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hook.jsx";
 import TodoItem from "./todoItem.jsx";
 import ModalAddTodo from "./modalAddTodo.jsx";
 import Header from "./Header.jsx";
+import ModalEditTodo from "./modalEdittodo.jsx";
 
 const TodoApp = () => {
   const dispatch = useAppDispatch();
@@ -87,6 +88,7 @@ const TodoApp = () => {
           isOpenModal={isOpenModal}
           setIsOpenModal={setIsOpenModal}
         />
+
         <TodoItem />
       </div>
     </div>

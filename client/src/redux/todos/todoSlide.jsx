@@ -38,18 +38,9 @@ export const addNewTodo = createAsyncThunk(
 export const finishTodo = createAsyncThunk(
   "todos/finishTodo",
   async (payload, thunkAPI) => {
-    const res = await fetch(`${API_URL}/${payload.id}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        ...payload,
-        completed: !payload.completed,
-      }),
-      headers: {
-        "Content-Type": " application/json",
-      },
-    });
-    const data = await res.json();
-    if (data && data.id) {
+    const res = await apiTodo.post(`/finish/${payload._id}`);
+    const data = res.data;
+    if (data.success) {
       //create succeed
       thunkAPI.dispatch(fetchListTodos());
     }
@@ -72,17 +63,11 @@ export const deleteTodo = createAsyncThunk(
 export const editTodo = createAsyncThunk(
   "todos/editTodo",
   async (payload, thunkAPI) => {
-    const res = await fetch(`${API_URL}/${payload.id}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        title: payload.title,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await res.json();
-    if (data && data.id) {
+    const res = await apiTodo.put(`/update/${payload._id}`, payload);
+    const data = res.data;
+    console.log("check data: ", data);
+
+    if (data.success) {
       //create succeed
       thunkAPI.dispatch(fetchListTodos());
     }

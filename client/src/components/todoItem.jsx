@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hook.jsx";
 import {
   deleteTodo,
@@ -7,9 +7,11 @@ import {
   setEditMode,
   setEditTodoItem,
 } from "../redux/todos/todoSlide.jsx";
+import ModalEditTodo from "./modalEdittodo.jsx";
 
 const TodoItem = () => {
   const todos = useAppSelector((state) => state.todos.listTodos);
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -32,6 +34,10 @@ const TodoItem = () => {
   if (!todos || todos.length === 0) {
     return <p className="text-center text-gray-500 my-8">No tasks yet 🚀</p>;
   }
+  const handleModalEditTodo = (todo) => {
+    dispatch(setEditTodoItem(todo));
+    setIsOpenModal(true);
+  };
 
   return (
     <div className="space-y-4">
@@ -51,7 +57,7 @@ const TodoItem = () => {
             <span style={{ flex: 1, marginLeft: 8 }}>{todo.title}</span>
             <button
               style={styles.editButton}
-              onClick={() => handleEditTodo(todo)}
+              onClick={() => handleModalEditTodo(todo)}
             >
               ✏️
             </button>
@@ -64,6 +70,10 @@ const TodoItem = () => {
           </li>
         ))}
       </ul>
+      <ModalEditTodo
+        isOpenModal={isOpenModal}
+        setIsOpenModal={setIsOpenModal}
+      />
     </div>
   );
 };

@@ -1,20 +1,37 @@
-import { useState } from "react";
-import { useAppDispatch } from "../redux/hook";
-import { addNewTodo } from "../redux/todos/todoSlide";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hook";
+import { addNewTodo, editTodo } from "../redux/todos/todoSlide";
 
-const ModalAddTodo = (props) => {
+const ModalEditTodo = (props) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
   const { isOpenModal, setIsOpenModal } = props;
+  const editTodoItem = useAppSelector((state) => state.todos.editTodoItem);
   const dispatch = useAppDispatch();
 
-  const handleAddNewTodo = () => {
+  useEffect(() => {
+    console.log("editTodoItem: ", editTodoItem);
+    if (isOpenModal && editTodoItem) {
+      setTitle(editTodoItem.title || "");
+      setDescription(editTodoItem.description || "");
+      if (editTodoItem.dueDate) {
+        const formattedDate = new Date(editTodoItem.dueDate)
+          .toISOString()
+          .split("T")[0];
+        setDueDate(formattedDate);
+      } else {
+        setDueDate("");
+      }
+    }
+  }, [isOpenModal, editTodoItem]);
+
+  const handleEditTodo = () => {
     if (title.trim() === "") {
       alert("title can not be empty");
       return;
     }
-    dispatch(addNewTodo({ title, dueDate, description }));
+    dispatch(editTodo({ _id: editTodoItem._id, title, dueDate, description }));
     setIsOpenModal(false);
   };
 
@@ -46,7 +63,7 @@ const ModalAddTodo = (props) => {
                 <label className="block mb-1 font-medium">Deadline</label>
                 <input
                   type="date"
-                  name="deadline"
+                  name="duedate"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
                   className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -82,7 +99,7 @@ const ModalAddTodo = (props) => {
                 Close
               </button>
               <button
-                onClick={() => handleAddNewTodo()}
+                onClick={() => handleEditTodo(editTodoItem)}
                 type="submit"
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
               >
@@ -96,4 +113,4 @@ const ModalAddTodo = (props) => {
   );
 };
 
-export default ModalAddTodo;
+export default ModalEditTodo;
