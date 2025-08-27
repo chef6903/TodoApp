@@ -30,7 +30,12 @@ const Header = () => {
 
   return (
     <div className="w-full flex justify-between items-center p-4 sm:p-6 sm:px-24 relative top-0 ">
-      <div className="text-medium text-xl font-bold ">Todo App</div>
+      <div
+        onClick={() => navigate("/")}
+        className="text-medium text-xl font-bold hover: cursor-pointer"
+      >
+        Todo App
+      </div>
       {isAuthenticated && userData ? (
         <div className="w-8 h-8 flex justify-center items-center rounded-full bg-black text-white relative group">
           {userData.name[0].toUpperCase()}

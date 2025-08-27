@@ -9,7 +9,8 @@ import {
 } from "../redux/todos/todoSlide.jsx";
 import ModalEditTodo from "./modalEdittodo.jsx";
 
-const TodoItem = () => {
+const TodoItem = (props) => {
+  const { filteredTodos } = props;
   const todos = useAppSelector((state) => state.todos.listTodos);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
@@ -42,7 +43,7 @@ const TodoItem = () => {
   return (
     <div className="space-y-4">
       <ul className=" my-5 mx-5 pb-5">
-        {todos.map((todo) => (
+        {filteredTodos.map((todo) => (
           <li
             key={todo._id}
             className={`flex justify-center items-center border-2 mb-2 bg-[#f9f9f9] rounded-[4px] px-3 py-2 ${

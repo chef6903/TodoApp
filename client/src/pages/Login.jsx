@@ -8,6 +8,7 @@ import { apiAuth, apiUser } from "../../service/api";
 import { useAppSelector } from "../redux/hook";
 import { useDispatch } from "react-redux";
 import { getUserData, setIsAuthenticated } from "../redux/todos/userSlide";
+import Header from "../components/Header";
 const Login = () => {
   const [state, setState] = useState("Sign up");
   const [username, setUserName] = useState("");
@@ -72,82 +73,85 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gray-100 ">
-      <div className="bg-white p-10 rounded-lg shadow-lg w-full sm:w-96 text-gray-700 text-sm border border-gray-200">
-        <h2 className="text-3xl font-semibold text-gray-900 text-center mb-3">
-          {state === "Sign up" ? "Create Account" : "Login"}
-        </h2>
-        <p className="text-center text-sm mb-5 text-gray-500">
-          {state === "Sign up"
-            ? "Create your account"
-            : "Login to your account!"}
-        </p>
-        <form onSubmit={onSubmitHandle}>
-          {state === "Sign up" && (
+    <div className="bg-gray-100">
+      <Header />
+      <div className="flex items-start justify-center min-h-screen px-6 sm:px-0 mt-20">
+        <div className="bg-white p-10 rounded-lg shadow-lg w-full sm:w-96 text-gray-700 text-sm border border-gray-200">
+          <h2 className="text-3xl font-semibold text-gray-900 text-center mb-3">
+            {state === "Sign up" ? "Create Account" : "Login"}
+          </h2>
+          <p className="text-center text-sm mb-5 text-gray-500">
+            {state === "Sign up"
+              ? "Create your account"
+              : "Login to your account!"}
+          </p>
+          <form onSubmit={onSubmitHandle}>
+            {state === "Sign up" && (
+              <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-100 border border-gray-300">
+                <img src={assets.person_icon} alt="" />
+                <input
+                  onChange={(e) => setUserName(e.target.value)}
+                  className="bg-transparent outline-none"
+                  type="text"
+                  placeholder="Full Name"
+                  required
+                  autoComplete="off"
+                  value={username}
+                />
+              </div>
+            )}
+
             <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-100 border border-gray-300">
-              <img src={assets.person_icon} alt="" />
+              <img src={assets.mail_icon} alt="" />
               <input
-                onChange={(e) => setUserName(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 className="bg-transparent outline-none"
-                type="text"
-                placeholder="Full Name"
+                type="email"
+                placeholder="Email"
                 required
-                autoComplete="off"
-                value={username}
+                autoComplete="new-email"
+                value={email}
               />
             </div>
+            <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-100 border border-gray-300">
+              <img src={assets.lock_icon} alt="" />
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                className="bg-transparent outline-none"
+                type="password"
+                placeholder="Password"
+                required
+                autoComplete="new-password"
+                value={password}
+              />
+            </div>
+
+            <button className="w-full py-2.5 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium hover:opacity-90 transition">
+              {state}
+            </button>
+          </form>
+          {state === "Sign up" ? (
+            <p className="text-gray-500 text-center text-xs mt-4">
+              Already have an account? {""}
+              <span
+                onClick={() => setState("Login")}
+                className="text-blue-400 cursor-pointer underline"
+              >
+                Login here
+              </span>
+            </p>
+          ) : (
+            <p className="text-blue-400 text-center text-xs mt-4">
+              Don't have an account? {""}
+              <span
+                onClick={() => setState("Sign up")}
+                className="text-gray-500 cursor-pointer underline"
+              >
+                Sign up
+              </span>
+            </p>
           )}
-
-          <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-100 border border-gray-300">
-            <img src={assets.mail_icon} alt="" />
-            <input
-              onChange={(e) => setEmail(e.target.value)}
-              className="bg-transparent outline-none"
-              type="email"
-              placeholder="Email"
-              required
-              autoComplete="new-email"
-              value={email}
-            />
-          </div>
-          <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-100 border border-gray-300">
-            <img src={assets.lock_icon} alt="" />
-            <input
-              onChange={(e) => setPassword(e.target.value)}
-              className="bg-transparent outline-none"
-              type="password"
-              placeholder="Password"
-              required
-              autoComplete="new-password"
-              value={password}
-            />
-          </div>
-
-          <button className="w-full py-2.5 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium hover:opacity-90 transition">
-            {state}
-          </button>
-        </form>
-        {state === "Sign up" ? (
-          <p className="text-gray-500 text-center text-xs mt-4">
-            Already have an account? {""}
-            <span
-              onClick={() => setState("Login")}
-              className="text-blue-400 cursor-pointer underline"
-            >
-              Login here
-            </span>
-          </p>
-        ) : (
-          <p className="text-blue-400 text-center text-xs mt-4">
-            Don't have an account? {""}
-            <span
-              onClick={() => setState("Sign up")}
-              className="text-gray-500 cursor-pointer underline"
-            >
-              Sign up
-            </span>
-          </p>
-        )}
+        </div>
       </div>
     </div>
   );

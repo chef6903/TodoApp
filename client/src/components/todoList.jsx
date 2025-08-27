@@ -21,12 +21,12 @@ const TodoApp = () => {
   const [activeTab, setActiveTab] = useState("today");
   const [isOpenModal, setIsOpenModal] = useState(false);
 
-  // const filteredTodos = (todos || []).filter((todo) => {
-  //   if (activeTab === "today") return !todo.completed;
-  //   if (activeTab === "pending") return !todo.completed;
-  //   if (activeTab === "completed") return todo.completed;
-  //   return true;
-  // });
+  const filteredTodos = (todos || []).filter((todo) => {
+    if (activeTab === "all") return todo;
+    if (activeTab === "pending") return !todo.completed;
+    if (activeTab === "completed") return todo.completed;
+    return true;
+  });
 
   const handleModalAddTodo = () => {
     if (!isAuthenticated) {
@@ -44,14 +44,14 @@ const TodoApp = () => {
         </h2>
         <nav class="flex justify-center space-x-2 my-4 mb-10">
           <button
-            onClick={() => setActiveTab("today")}
+            onClick={() => setActiveTab("all")}
             className={`px-6 py-2 rounded-md font-medium ${
-              activeTab === "today"
+              activeTab === "all"
                 ? "bg-green-900 text-white"
                 : "bg-green-200 text-black"
             }`}
           >
-            Today
+            All
           </button>
           <button
             onClick={() => setActiveTab("pending")}
@@ -89,7 +89,7 @@ const TodoApp = () => {
           setIsOpenModal={setIsOpenModal}
         />
 
-        <TodoItem />
+        <TodoItem filteredTodos={filteredTodos} />
       </div>
     </div>
   );
