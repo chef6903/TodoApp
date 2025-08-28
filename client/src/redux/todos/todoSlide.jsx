@@ -5,9 +5,11 @@ const API_URL = "http://localhost:3001/todos";
 
 export const fetchListTodos = createAsyncThunk(
   "todos/fetchListTodos",
-  async () => {
+  async ({ page = 1, limit = 5, status = "all" } = {}) => {
     try {
-      const res = await apiTodo.get("/");
+      const res = await apiTodo.get(
+        `/?page=${page}&limit=${limit}&status=${status}`
+      );
       return res.data;
     } catch (error) {
       console.error("Fetch todos failed:", error);
@@ -24,7 +26,9 @@ export const addNewTodo = createAsyncThunk(
       const data = res.data;
 
       if (data.success && data.todo) {
-        thunkAPI.dispatch(fetchListTodos()); // fetch lại danh sách
+        const state = thunkAPI.getState();
+        const { page, limit, status } = state.todos.pagination;
+        thunkAPI.dispatch(fetchListTodos({ page, limit, status }));
       }
 
       return data.todo;
@@ -42,7 +46,9 @@ export const finishTodo = createAsyncThunk(
     const data = res.data;
     if (data.success) {
       //create succeed
-      thunkAPI.dispatch(fetchListTodos());
+      const state = thunkAPI.getState();
+      const { page, limit, status } = state.todos.pagination;
+      thunkAPI.dispatch(fetchListTodos({ page, limit, status }));
     }
     return data;
   }
@@ -54,7 +60,9 @@ export const deleteTodo = createAsyncThunk(
     const res = await apiTodo.delete(`/delete/${payload._id}`);
     const data = res.data;
     if (data.success) {
-      thunkAPI.dispatch(fetchListTodos());
+      const state = thunkAPI.getState();
+      const { page, limit, status } = state.todos.pagination;
+      thunkAPI.dispatch(fetchListTodos({ page, limit, status }));
     }
     return res.data;
   }
@@ -65,13 +73,12 @@ export const editTodo = createAsyncThunk(
   async (payload, thunkAPI) => {
     const res = await apiTodo.put(`/update/${payload._id}`, payload);
     const data = res.data;
-    console.log("check data: ", data);
-
     if (data.success) {
-      //create succeed
-      thunkAPI.dispatch(fetchListTodos());
+      const state = thunkAPI.getState();
+      const { page, limit, status } = state.todos.pagination;
+      thunkAPI.dispatch(fetchListTodos({ page, limit, status }));
     }
-    return data;
+    return res.data;
   }
 );
 
@@ -83,6 +90,13 @@ const initialState = {
   isFinishSuccess: false,
   isEditMode: false,
   editTodoItem: null,
+  pagination: {
+    total: 0,
+    page: 1,
+    limit: 5,
+    totalPages: 1,
+    status: "all",
+  },
 };
 
 const todoSlice = createSlice({
@@ -121,14 +135,35 @@ const todoSlice = createSlice({
     builder.addCase(fetchListTodos.fulfilled, (state, action) => {
       // Add user to the state array
       state.listTodos = action.payload.todos;
+      state.pagination = action.payload.pagination;
+      state.pagination.status = action.meta.arg?.status || "all";
     });
     builder.addCase(addNewTodo.fulfilled, (state, action) => {
-      // Add user to the state array
       state.isAddNewSuccess = true;
     });
     builder.addCase(finishTodo.fulfilled, (state, action) => {
-      // Add user to the state array
       state.isFinishSuccess = true;
+      const updatedTodo = action.payload.todo;
+      if (!updatedTodo) return;
+
+      if (state.pagination.status === "pending" && updatedTodo.completed) {
+        state.listTodos = state.listTodos.filter(
+          (t) => t._id !== updatedTodo._id
+        );
+        return;
+      }
+
+      if (state.pagination.status === "completed" && !updatedTodo.completed) {
+        state.listTodos = state.listTodos.filter(
+          (t) => t._id !== updatedTodo._id
+        );
+        return;
+      }
+
+      // Còn lại thì chỉ cần update tại chỗ
+      state.listTodos = state.listTodos.map((t) =>
+        t._id === updatedTodo._id ? updatedTodo : t
+      );
     });
     builder.addCase(deleteTodo.fulfilled, (state, action) => {
       // Add user to the state array

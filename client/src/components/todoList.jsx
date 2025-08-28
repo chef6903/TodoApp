@@ -14,19 +14,17 @@ import ModalEditTodo from "./modalEdittodo.jsx";
 
 const TodoApp = () => {
   const dispatch = useAppDispatch();
-  const todos = useAppSelector((state) => state.todos.listTodos);
-  const { isAuthenticated, userData } = useAppSelector((state) => state.users);
-  const [newTodo, setNewTodo] = useState("");
+  const { listTodos, pagination } = useAppSelector((state) => state.todos);
+  const { isAuthenticated } = useAppSelector((state) => state.users);
 
   const [activeTab, setActiveTab] = useState("today");
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const limit = 4;
 
-  const filteredTodos = (todos || []).filter((todo) => {
-    if (activeTab === "all") return todo;
-    if (activeTab === "pending") return !todo.completed;
-    if (activeTab === "completed") return todo.completed;
-    return true;
-  });
+  useEffect(() => {
+    dispatch(fetchListTodos({ page, limit, status: activeTab }));
+  }, [dispatch, page, limit, activeTab]);
 
   const handleModalAddTodo = () => {
     if (!isAuthenticated) {
@@ -42,37 +40,23 @@ const TodoApp = () => {
         <h2 className="mb-4 text-center bg-[#2F6A34] text-white text-2xl py-3">
           📝 My Tasks
         </h2>
-        <nav class="flex justify-center space-x-2 my-4 mb-10">
-          <button
-            onClick={() => setActiveTab("all")}
-            className={`px-6 py-2 rounded-md font-medium ${
-              activeTab === "all"
-                ? "bg-green-900 text-white"
-                : "bg-green-200 text-black"
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setActiveTab("pending")}
-            className={`px-6 py-2 rounded-md font-medium ${
-              activeTab === "pending"
-                ? "bg-green-900 text-white"
-                : "bg-green-200 text-black"
-            }`}
-          >
-            Pending
-          </button>
-          <button
-            onClick={() => setActiveTab("completed")}
-            className={`px-6 py-2 rounded-md font-medium ${
-              activeTab === "completed"
-                ? "bg-green-900 text-white"
-                : "bg-green-200 text-black"
-            }`}
-          >
-            Completed
-          </button>
+        <nav className="flex justify-center space-x-2 my-4 mb-10">
+          {["all", "pending", "completed"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => {
+                setActiveTab(tab);
+                setPage(1); // reset về page 1 khi đổi tab
+              }}
+              className={`px-6 py-2 rounded-md font-medium ${
+                activeTab === tab
+                  ? "bg-green-900 text-white"
+                  : "bg-green-200 text-black"
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
         </nav>
         <div className="flex justify-between items-center mx-5">
           <h1 className="text-2xl font-bold">Tasks List</h1>
@@ -83,13 +67,33 @@ const TodoApp = () => {
             Add task
           </button>
         </div>
+
         {/* <TodoInput title={title} setTitle={setTitle} /> */}
         <ModalAddTodo
           isOpenModal={isOpenModal}
           setIsOpenModal={setIsOpenModal}
         />
 
-        <TodoItem filteredTodos={filteredTodos} />
+        <TodoItem filteredTodos={listTodos} />
+        <div className="flex justify-center space-x-2 my-4">
+          <button
+            disabled={page <= 1}
+            onClick={() => setPage(page - 1)}
+            className="px-4 py-2 border rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <span className="px-4 py-2">
+            Page {pagination?.page} / {pagination?.totalPages}
+          </span>
+          <button
+            disabled={page >= pagination?.totalPages}
+            onClick={() => setPage(page + 1)}
+            className="px-4 py-2 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

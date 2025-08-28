@@ -3,18 +3,30 @@ import User from "../models/userModel.js";
 
 export const getTodos = async (req, res) => {
   try {
-    const userId = req.user.userId; // lấy từ middleware userAuth
+    const userId = req.user.userId; // từ middleware userAuth
+    const { page = 1, limit = 5, status = "all" } = req.query;
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
-    }
+    const query = { userId };
+    if (status === "pending") query.completed = false;
+    if (status === "completed") query.completed = true;
 
-    // chỉ lấy todo thuộc về user này
-    const todos = await Todo.find({ userId: userId }).sort({ createdAt: -1 });
-    res.status(200).json({ success: true, todos });
+    const total = await Todo.countDocuments(query);
+
+    const todos = await Todo.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    res.status(200).json({
+      success: true,
+      todos,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

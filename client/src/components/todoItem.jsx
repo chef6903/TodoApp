@@ -8,6 +8,7 @@ import {
   setEditTodoItem,
 } from "../redux/todos/todoSlide.jsx";
 import ModalEditTodo from "./modalEdittodo.jsx";
+import dayjs from "dayjs";
 
 const TodoItem = (props) => {
   const { filteredTodos } = props;
@@ -56,6 +57,9 @@ const TodoItem = (props) => {
               onChange={() => handleFinishTodo(todo)}
             />
             <span style={{ flex: 1, marginLeft: 8 }}>{todo.title}</span>
+            <span style={{ flex: 1, marginLeft: 8 }}>
+              {dayjs(todo.dueDate).format("DD/MM/YYYY")}
+            </span>{" "}
             <button
               style={styles.editButton}
               onClick={() => handleModalEditTodo(todo)}
