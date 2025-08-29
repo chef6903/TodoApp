@@ -61,14 +61,14 @@ const TodoItem = (props) => {
               {dayjs(todo.dueDate).format("DD/MM/YYYY")}
             </span>{" "}
             <button
-              style={styles.editButton}
+              className="ml-2 bg-[#d9d5d5ff] text-[#fff] border-none rounded-[4px] py-[6px] px-[10px]"
               onClick={() => handleModalEditTodo(todo)}
             >
               ✏️
             </button>
             <button
-              style={styles.deleteButton}
               onClick={() => handleDeleteTodo(todo)}
+              className="ml-2 bg-[#dc3545] text-[#fff] border-none rounded-[4px] py-[6px] px-[10px]"
             >
               ❌
             </button>
@@ -81,65 +81,6 @@ const TodoItem = (props) => {
       />
     </div>
   );
-};
-
-const styles = {
-  container: {
-    maxWidth: 500,
-    margin: "40px auto",
-    padding: 20,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-  },
-  inputContainer: {
-    display: "flex",
-    marginBottom: 20,
-  },
-  input: {
-    flex: 1,
-    padding: 10,
-    fontSize: 16,
-    border: "1px solid #ccc",
-    borderRadius: 4,
-  },
-  addButton: {
-    marginLeft: 8,
-    padding: "10px 16px",
-    fontSize: 16,
-    backgroundColor: "#28a745",
-    color: "#fff",
-    border: "none",
-    borderRadius: 4,
-    cursor: "pointer",
-  },
-
-  // todoItem: {
-  //   display: "flex",
-  //   alignItems: "center",
-  //   marginBottom: 10,
-  //   padding: "8px 12px",
-  //   backgroundColor: "#f9f9f9",
-  //   borderRadius: 4,
-  // },
-  deleteButton: {
-    marginLeft: 8,
-    backgroundColor: "#dc3545",
-    color: "#fff",
-    border: "none",
-    borderRadius: 4,
-    padding: "6px 10px",
-    cursor: "pointer",
-  },
-  editButton: {
-    marginLeft: 8,
-    color: "#fff",
-    backgroundColor: "#d9d5d5ff",
-    border: "none",
-    borderRadius: 4,
-    padding: "6px 11px",
-    cursor: "pointer",
-  },
 };
 
 export default TodoItem;

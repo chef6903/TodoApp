@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchListTodos,
-  deleteTodo,
-  addNewTodo,
-} from "../redux/todos/todoSlide.jsx";
-import TodoInput from "./todoInput.jsx";
+import { fetchListTodos } from "../redux/todos/todoSlide.jsx";
 import { useAppDispatch, useAppSelector } from "../redux/hook.jsx";
 import TodoItem from "./todoItem.jsx";
 import ModalAddTodo from "./modalAddTodo.jsx";
-import Header from "./Header.jsx";
-import ModalEditTodo from "./modalEdittodo.jsx";
 
 const TodoApp = () => {
   const dispatch = useAppDispatch();
   const { listTodos, pagination } = useAppSelector((state) => state.todos);
   const { isAuthenticated } = useAppSelector((state) => state.users);
 
-  const [activeTab, setActiveTab] = useState("today");
+  const [activeTab, setActiveTab] = useState(
+    () => localStorage.getItem("activeTab") || "today"
+  );
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [page, setPage] = useState(1);
   const limit = 4;
@@ -25,6 +19,10 @@ const TodoApp = () => {
   useEffect(() => {
     dispatch(fetchListTodos({ page, limit, status: activeTab }));
   }, [dispatch, page, limit, activeTab]);
+
+  useEffect(() => {
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
 
   const handleModalAddTodo = () => {
     if (!isAuthenticated) {
