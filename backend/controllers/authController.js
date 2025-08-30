@@ -72,7 +72,7 @@ export const login = async (req, res) => {
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // bắt buộc khi deploy HTTPS
+      secure: true, // bắt buộc khi deploy HTTPS
       sameSite: "None", // cho phép cookie gửi cross-site
       maxAge: 24 * 60 * 60 * 1000, // 1 ngày
     });
