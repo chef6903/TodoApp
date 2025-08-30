@@ -64,7 +64,6 @@ const userSlide = createSlice({
     builder
       .addCase(getUserData.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
         state.isAuthenticated = true;
         state.userData = action.payload;
         localStorage.setItem("isAuthenticated", "true");
