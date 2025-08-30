@@ -53,7 +53,7 @@ const Login = () => {
         });
         if (data.success) {
           dispatch(setIsAuthenticated(true));
-          dispatch(getUserData());
+          await dispatch(getUserData());
           navigate("/");
         } else {
           toast.error(data.message);

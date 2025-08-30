@@ -35,7 +35,7 @@ export const getUserData = createAsyncThunk(
 );
 
 const initialState = {
-  isAuthenticated: false,
+  isAuthenticated: localStorage.getItem("isAuthenticated") === "true",
   userData: null,
   loading: true,
 };
@@ -46,6 +46,10 @@ const userSlide = createSlice({
   reducers: {
     setIsAuthenticated: (state, action) => {
       state.isAuthenticated = action.payload;
+      localStorage.setItem(
+        "isAuthenticated",
+        action.payload ? "true" : "false"
+      );
     },
     setUserData(state, action) {
       state.userData = action.payload;
@@ -53,6 +57,7 @@ const userSlide = createSlice({
     clearUserData: (state) => {
       state.userData = null;
       state.isAuthenticated = false;
+      localStorage.removeItem("isAuthenticated");
     },
   },
   extraReducers: (builder) => {
@@ -62,6 +67,8 @@ const userSlide = createSlice({
         state.user = action.payload;
         state.isAuthenticated = true;
         state.userData = action.payload;
+        localStorage.setItem("isAuthenticated", "true");
+
         console.log(
           "✅ Redux userData (sau khi login/getUserData):",
           action.payload
@@ -70,6 +77,13 @@ const userSlide = createSlice({
       .addCase(getAuthState.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.loading = false;
+        localStorage.setItem("isAuthenticated", "true");
+      })
+      .addCase(getAuthState.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.userData = null;
+        state.loading = false;
+        localStorage.removeItem("isAuthenticated");
       });
   },
 });
